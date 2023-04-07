@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Podcast Player</title>
+    <style>
+        body {
+            margin: 0;
+        }
+        #podcast-player {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        audio {
+            width: 100%;
+            margin-bottom: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <div id="podcast-player">
+        <!-- Podcast episodes will be displayed here -->
+    </div>
+    <script>
+        const podcastFeedUrl = 'https://anchor.fm/s/e7bf58/podcast/rss';
+        const podcastPlayer = document.getElementById('podcast-player');
+
+        fetch(podcastFeedUrl)
+            .then(response => response.text())
+            .then(str => new DOMParser().parseFromString(str, "application/xml"))
+            .then(xml => {
+                const items = xml.getElementsByTagName('item');
+                for (let i = 0; i < items.length; i++) {
+                    const audioUrl = items[i].getElementsByTagName('enclosure')[0].getAttribute('url');
+                    const audioElement = document.createElement('audio');
+                    audioElement.setAttribute('controls', '');
+                    audioElement.setAttribute('src', audioUrl);
+                    podcastPlayer.appendChild(audioElement);
+                }
+            })
+            .catch(error => console.error('Error fetching podcast feed:', error));
+    </script>
+</body>
+</html>
